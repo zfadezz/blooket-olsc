@@ -1,0 +1,46 @@
+javascript:(function() {
+    // 1. Target the common Sparx Reader content containers
+    const selectors = ['.reading-content', '.article-container', 'article', 'main'];
+    let target = null;
+
+    for (let s of selectors) {
+        let el = document.querySelector(s);
+        if (el) { target = el; break; }
+    }
+
+    if (!target) {
+        alert("Content container not found. Try tapping directly on the text first.");
+        return;
+    }
+
+    // 2. Force text to be selectable via CSS
+    target.style.userSelect = "text";
+    target.style.webkitUserSelect = "text";
+    target.style.cursor = "auto";
+
+    // 3. Create a simple 'Copy Text' floating button
+    const btn = document.createElement('button');
+    btn.innerHTML = "📋 Copy Container Text";
+    btn.style.position = "fixed";
+    btn.style.top = "10px";
+    btn.style.right = "10px";
+    btn.style.zIndex = "10000";
+    btn.style.padding = "10px";
+    btn.style.backgroundColor = "#007AFF";
+    btn.style.color = "white";
+    btn.style.border = "none";
+    btn.style.borderRadius = "8px";
+    btn.style.fontSize = "14px";
+
+    btn.onclick = function() {
+        const text = target.innerText || target.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.innerHTML = "✅ Copied!";
+            setTimeout(() => { btn.remove(); }, 2000);
+        }).catch(err => {
+            alert("Error copying: " + err);
+        });
+    };
+
+    document.body.appendChild(btn);
+})();
